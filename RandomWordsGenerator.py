@@ -1,9 +1,11 @@
 import requests
+import random
 
 
 def filter_words(self, word_list):
     """Removes a word out of the list if it has another word in it"""
-    # There was a problem with random other words going green, and I couldn't be bothered to find a better way
+
+    # There was a problem with other words going green, and I couldn't be bothered to find a better way of solving it
     words_to_remove = []
 
     for word1 in word_list:
@@ -17,6 +19,7 @@ def filter_words(self, word_list):
 class RandomWordsGenerator:
 
     def get_random_words(self):
+        """Gets random words from an API and returns a set list of words if the user has no internet"""
 
         # Parameters for the API request
         params = {
@@ -31,6 +34,7 @@ class RandomWordsGenerator:
             return filter_words(self, random_words)
 
         except:
+            # For when the user doesn't have internet access
             offline_words = [
                 "apple", "banana", "orange", "grape", "kiwi",
                 "watermelon", "mango", "strawberry", "blueberry", "raspberry",
@@ -44,5 +48,7 @@ class RandomWordsGenerator:
                 "date", "durian", "elderberry", "jamberry", "ackee",
                 "carambola", "feijoa"
             ]
+            random.shuffle(offline_words)
+
             return filter_words(self, offline_words)
 

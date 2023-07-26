@@ -48,18 +48,28 @@ def stop_timer():
                        font=FONT)
 
 
+def enable_entry():
+    input_entry.config(state=tk.NORMAL)
+
+def disable_entry():
+    input_entry.config(state=tk.DISABLED)
+    input_entry.after(2000, enable_entry)
+
+
 def update_timer():
     """Updates the timer after 100ms"""
 
     if timer_is_running:
-        time_left = 60 - (time.time() - starting_time)
+        time_left = 5 - (time.time() - starting_time)
         timer_label.config(text=f"Time Left: {time_left:.0f}")
 
         if time_left <= 0:
             stop_timer()
+            disable_entry()
 
     # Schedule after 100ms
     root.after(100, update_timer)
+
 
 
 def submit():
@@ -80,7 +90,8 @@ def submit():
     approximate_accuracy = (total_correct_words / total_words_typed) * 100
 
     print(f"Total words typed: {total_words_typed}")
-    timer_label.config(text=f"Time's up! You type at approximately {approximate_wpm:.0f} WPM with {approximate_accuracy:.0f}% accuracy!",
+    timer_label.config(text=f"Looks like you didn't want to type the full minute.\n"
+                            f" You type at approximately {approximate_wpm:.0f} WPM with {approximate_accuracy:.0f}% accuracy!",
                        font=FONT)
 
 
@@ -89,6 +100,9 @@ def submit():
 
 def on_entry_click(event):
     input_entry.delete(0, "end")
+
+def on_enter(event):
+    submit()
 
 
 def read_keyboard(event):
@@ -170,8 +184,11 @@ input_entry.config(fg="gray")
 input_entry.grid(row=2, column=1, columnspan=3, padx=20, pady=20, rowspan=1, )
 input_entry.bind("<KeyPress>", read_keyboard)
 
-# Removing text after user has clicked on Entry Bar
+## Removing text after user has clicked on Entry Bar
 input_entry.bind("<FocusIn>", on_entry_click)
+
+## Submitting after the user clicked Enter
+input_entry.bind("<Return>", on_enter)
 
 # Buttons
 submit_button = tk.Button(root, text="Submit", command=submit, height=5, width=5, bg="lightblue")
